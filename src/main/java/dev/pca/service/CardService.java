@@ -53,8 +53,14 @@ public class CardService {
             Predicate<Card> filter = card -> queryParams.get("flavour").contains(card.getText());
             filters.add(filter);
         }
-        //rarity
-        //type
+        if (queryParams.containsKey("rarity")) {
+            Predicate<Card> filter = card -> queryParams.get("rarity").contains(card.getText());
+            filters.add(filter);
+        }
+        if (queryParams.containsKey("type")) {
+            Predicate<Card> filter = card -> queryParams.get("type").contains(card.getText());
+            filters.add(filter);
+        }
         //region stats
         if (queryParams.containsKey("intellect")) {
             Predicate<Card> filter = card -> queryParams.get("intellect").contains(card.getStats().getIntellect());
