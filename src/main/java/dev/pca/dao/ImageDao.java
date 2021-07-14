@@ -37,12 +37,6 @@ public class ImageDao {
         return image;
     }
 
-    public Collection<Image> getAll() {
-        return imageRepo.findAll().stream()
-                .limit(MAX_REQUEST_SIZE)
-                .collect(Collectors.toList());
-    }
-
     public Optional<Image> getById(String id) {
         return imageRepo.findById(id);
     }
@@ -54,9 +48,7 @@ public class ImageDao {
     }
 
     public Optional<Image> getByCode(String code, int width) {
-        Optional<Image> image = imageRepo.findAll().stream()
-                .filter(img -> img.getCode().equals(code))
-                .findFirst();
+        Optional<Image> image = getByCode(code);
 
         if (image.isPresent()) {
             Image img = image.get();
@@ -70,10 +62,10 @@ public class ImageDao {
                 out.close();
             } catch (IOException e) {
                 e.printStackTrace();
+                return Optional.empty();
             }
             return Optional.of(img);
         }
-
         return Optional.empty();
     }
 

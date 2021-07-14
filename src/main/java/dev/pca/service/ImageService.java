@@ -2,11 +2,11 @@ package dev.pca.service;
 
 import dev.pca.dao.ImageDao;
 import dev.pca.models.Image;
+import org.bson.types.Binary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,15 +24,11 @@ public class ImageService {
         return imageDao.insert(title, file);
     }
 
-    public Collection<Image> getAll() {
-        return imageDao.getAll();
-    }
-
     public Optional<Image> getByImageId(String id) {
         return imageDao.getById(id);
     }
 
-    public Optional<Image> getByImageCode(String code, String width) {
+    public Optional<Image> getImgBinByCode(String code, String width) {
         Matcher matcher = PATTERN.matcher(width);
         if (matcher.find()) {
             return imageDao.getByCode(code, Integer.parseInt(matcher.group(0)));
@@ -40,4 +36,12 @@ public class ImageService {
         return imageDao.getByCode(code);
     }
 
+    public Optional<Binary> getImgByCode(String code, String width) {
+        Optional<Image> optImg = getImgBinByCode(code, width);
+        if (optImg.isEmpty()) {
+            return Optional.empty();
+        }
+        Binary imageBin = optImg.get().getImage();
+        return Optional.of(imageBin);
+    }
 }
