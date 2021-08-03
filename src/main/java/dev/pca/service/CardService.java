@@ -22,110 +22,80 @@ public class CardService {
         return response;
     }
 
-    public Collection<Card> getAll() {
-        return cardDao.getAll();
+    public Optional<Collection<Card>> getAll() {
+        return Optional.of(cardDao.getAll());
     }
 
-    public Optional<Card> getByCardId(String id) {
-        return cardDao.getById(id);
+    public Optional<Collection<Card>> getByCardId(List<String> ids) {
+        return cardDao.getByPredicate(CardPredicates.byCardId(ids));
     }
 
-    public Optional<Card> getByCardCode(String code) {
-        return cardDao.getByCode(code);
+    public Optional<Collection<Card>> getByCardCode(List<String> codes) {
+        return cardDao.getByPredicate(CardPredicates.byCardCode(codes));
     }
 
-    public Optional<Collection<Card>> filterBy(Map<String,String> queryParams) {
+    public Optional<Collection<Card>> filterBy(Map<String, String> queryParams) {
         Collection<Predicate<Card>> filters = new ArrayList<>();
 
-        if (queryParams.containsKey("code")) {
-            Predicate<Card> filter = card -> queryParams.get("code").contains(card.getCardCode());
-            filters.add(filter);
-        }
+        //region general information
         if (queryParams.containsKey("name")) {
-            Predicate<Card> filter = card -> queryParams.get("name").contains(card.getName());
-            filters.add(filter);
+            filters.add(CardPredicates.byName(queryParams.get("name")));
         }
         if (queryParams.containsKey("text")) {
-            Predicate<Card> filter = card -> queryParams.get("text").contains(card.getText());
-            filters.add(filter);
+            filters.add(CardPredicates.byText(queryParams.get("text")));
         }
         if (queryParams.containsKey("flavour")) {
-            Predicate<Card> filter = card -> queryParams.get("flavour").contains(card.getText());
-            filters.add(filter);
+            filters.add(CardPredicates.byFlavour(queryParams.get("flavour")));
         }
         if (queryParams.containsKey("rarity")) {
-            Predicate<Card> filter = card -> queryParams.get("rarity").contains(card.getText());
-            filters.add(filter);
+            filters.addAll(CardPredicates.byRarity(queryParams.get("rarity")));
         }
         if (queryParams.containsKey("type")) {
-            Predicate<Card> filter = card -> queryParams.get("type").contains(card.getText());
-            filters.add(filter);
+            filters.addAll(CardPredicates.byType(queryParams.get("type")));
         }
-        //region stats
-        if (queryParams.containsKey("intellect")) {
-            Predicate<Card> filter = card -> queryParams.get("intellect").contains(card.getStats().getIntellect());
-            filters.add(filter);
-        }
-        if (queryParams.containsKey("life")) {
-            Predicate<Card> filter = card -> queryParams.get("life").contains(card.getStats().getLife());
-            filters.add(filter);
-        }
-        if (queryParams.containsKey("power")) {
-            Predicate<Card> filter = card -> queryParams.get("power").contains(card.getStats().getPower());
-            filters.add(filter);
-        }
-        if (queryParams.containsKey("defense")) {
-            Predicate<Card> filter = card -> queryParams.get("defense").contains(card.getStats().getDefense());
-            filters.add(filter);
-        }
-        if (queryParams.containsKey("cost")) {
-            Predicate<Card> filter = card -> queryParams.get("cost").contains(card.getStats().getCost());
-            filters.add(filter);
-        }
-        if (queryParams.containsKey("resource")) {
-            Predicate<Card> filter = card -> queryParams.get("resource").contains(card.getStats().getResource());
-            filters.add(filter);
-        }
-        //endregion
         if (queryParams.containsKey("class")) {
-            Predicate<Card> filter = card -> queryParams.get("class").contains(card.getCardClass());
-            filters.add(filter);
+            filters.add(CardPredicates.byCardClass(queryParams.get("class")));
         }
         if (queryParams.containsKey("talent")) {
-            Predicate<Card> filter = card -> queryParams.get("class").contains(card.getTalent());
-            filters.add(filter);
+            filters.add(CardPredicates.byTalent(queryParams.get("talent")));
         }
         if (queryParams.containsKey("set")) {
-            Predicate<Card> filter = card -> queryParams.get("set").contains(card.getSetCode());
-            filters.add(filter);
+            filters.add(CardPredicates.bySetCode(queryParams.get("set")));
         }
+        //endregion
+
+        //region stats
+        if (queryParams.containsKey("intellect")) {
+            filters.add(CardPredicates.byIntellect(queryParams.get("intellect")));
+        }
+        if (queryParams.containsKey("life")) {
+            filters.add(CardPredicates.byLife(queryParams.get("life")));
+        }
+        if (queryParams.containsKey("power")) {
+            filters.add(CardPredicates.byPower(queryParams.get("power")));
+        }
+        if (queryParams.containsKey("defense")) {
+            filters.add(CardPredicates.byDefense(queryParams.get("defense")));
+        }
+        if (queryParams.containsKey("cost")) {
+            filters.add(CardPredicates.byCost(queryParams.get("cost")));
+        }
+        if (queryParams.containsKey("resource")) {
+            filters.add(CardPredicates.byResource(queryParams.get("resource")));
+        }
+        //endregion
+
+        //region meta information
         if (queryParams.containsKey("illegalFormats")) {
-            Predicate<Card> filter = card -> {
-                for (String format : card.getIllegalFormats()) {
-                    return queryParams.get("illegalFormats").contains(format);
-                }
-                return false;
-            };
-            filters.add(filter);
+            filters.add(CardPredicates.byIllegalFormats(queryParams.get("illegalFormats")));
         }
         if (queryParams.containsKey("frames")) {
-            Predicate<Card> filter = card -> {
-                for (String frame : card.getFrames()) {
-                    return queryParams.get("frames").contains(frame);
-                }
-                return false;
-            };
-            filters.add(filter);
+            filters.add(CardPredicates.byFrames(queryParams.get("frames")));
         }
         if (queryParams.containsKey("printings")) {
-            Predicate<Card> filter = card -> {
-                for (String print : card.getPrintings()) {
-                    return queryParams.get("printings").contains(print);
-                }
-                return false;
-            };
-            filters.add(filter);
+            filters.add(CardPredicates.byPrintings(queryParams.get("printings")));
         }
+        //endregion
 
         return cardDao.getByPredicate(filters);
     }

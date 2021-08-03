@@ -29,18 +29,9 @@ public class CardDao {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Card> getById(String id) {
-        return cardRepo.findById(id);
-    }
-
-    public Optional<Card> getByCode(String code) {
-        return cardRepo.findAll().stream().parallel()
-                .filter(card -> card.getCardCode().equals(code)).findFirst();
-    }
-
     public Optional<Collection<Card>> getByPredicate(Collection<Predicate<Card>> filters) {
         return Optional.of(cardRepo.findAll().stream()
-                .filter(filters.stream().reduce(Predicate::and).orElse(t->true))
+                .filter(filters.stream().reduce(Predicate::or).orElse(t->true))
                 .limit(MAX_REQUEST_SIZE)
                 .collect(Collectors.toList()));
     }
