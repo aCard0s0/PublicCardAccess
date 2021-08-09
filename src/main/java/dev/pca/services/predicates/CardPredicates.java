@@ -1,14 +1,13 @@
-package dev.pca.services;
+package dev.pca.services.predicates;
 
 import dev.pca.models.Card;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
+import static dev.pca.services.predicates.UtilsPredicates.*;
 import static java.util.Objects.nonNull;
 
 public class CardPredicates {
@@ -45,7 +44,7 @@ public class CardPredicates {
 
     public static Collection<? extends Predicate<Card>> byRarity(String rarities) {
         Collection<Predicate<Card>> filters = new ArrayList<>();
-        for (String rarity: getPossibleMultipleParamsFromRequest(rarities)) {
+        for (String rarity: getPossibleMultipleParamsFromRequestParams(rarities)) {
             filters.add(card -> nonNull(card) && parseToCaseInsensitiveRegex(rarity).matcher(card.getRarity()).find());
         }
         return filters;
@@ -53,7 +52,7 @@ public class CardPredicates {
 
     public static Collection<? extends Predicate<Card>> byType(String types) {
         Collection<Predicate<Card>> filters = new ArrayList<>();
-        for (String type: getPossibleMultipleParamsFromRequest(types)) {
+        for (String type: getPossibleMultipleParamsFromRequestParams(types)) {
             filters.add(card -> nonNull(card) && parseToCaseInsensitiveRegex(type).matcher(card.getType()).find());
         }
         return filters;
@@ -132,16 +131,4 @@ public class CardPredicates {
         };
     }
     //endregion
-
-    private static Pattern parseToCaseSensitiveRegex(String searchString) {
-        return Pattern.compile(Pattern.quote(searchString));
-    }
-
-    private static Pattern parseToCaseInsensitiveRegex(String searchString) {
-        return Pattern.compile(Pattern.quote(searchString), Pattern.CASE_INSENSITIVE);
-    }
-
-    private static List<String> getPossibleMultipleParamsFromRequest(String values) {
-        return Arrays.asList(values.split("\\s*,\\s*"));
-    }
 }

@@ -21,7 +21,7 @@ public class CustomizedResponseExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({CardNotFoundException.class, ImageNotFoundException.class})
+    @ExceptionHandler({CardNotFoundException.class, ImageNotFoundException.class, ReleaseNotFoundException.class})
     public final ResponseEntity<Object> handleCardNotFoundException(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);

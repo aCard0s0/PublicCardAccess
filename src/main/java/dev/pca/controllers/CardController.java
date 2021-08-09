@@ -39,7 +39,7 @@ public class CardController {
 
     @GetMapping
     public ResponseEntity<Collection<Card>> getAllCards() {
-        LOGGER.debug("operation='createCard', message=''");
+        LOGGER.debug("operation='getAllCards', message=''");
         return buildCollectionResponse(cardService.getAll(), "Empty DB");
     }
 

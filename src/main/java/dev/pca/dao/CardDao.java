@@ -4,7 +4,8 @@ import dev.pca.models.Card;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 

@@ -3,9 +3,15 @@ package dev.pca.services;
 import dev.pca.dao.ImageDao;
 import dev.pca.models.Image;
 import org.bson.types.Binary;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,20 +39,24 @@ public class ImageService {
         return convertToBinary(image);
     }
 
-    public Optional<Image> getImgVerboseById(String code, String width) {
-        Matcher matcher = PATTERN.matcher(width);
-        if (matcher.find()) {
-            return imageDao.getById(code, Integer.parseInt(matcher.group(0)));
-        }
-        return imageDao.getById(code);
+    public Optional<Image> getImgVerboseById(String id, String width) {
+        Optional<Image> img = imageDao.getById(id);
+        return checkPresenceAndResize(img, width);
     }
 
     public Optional<Image> getImgVerboseByCode(String code, String width) {
-        Matcher matcher = PATTERN.matcher(width);
-        if (matcher.find()) {
-            return imageDao.getByCode(code, Integer.parseInt(matcher.group(0)));
+        Optional<Image> img = imageDao.getByCode(code);
+        return checkPresenceAndResize(img, width);
+    }
+
+    private Optional<Image> checkPresenceAndResize(Optional<Image> img, String width) {
+        if (img.isPresent()) {
+            Matcher matcher = PATTERN.matcher(width);
+            if (matcher.find()) {
+                return resizedImage(img.get(), Integer.parseInt(matcher.group(0)));
+            }
         }
-        return imageDao.getByCode(code);
+        return Optional.empty();
     }
 
     private Optional<Binary> convertToBinary(Optional<Image> image) {
@@ -55,5 +65,21 @@ public class ImageService {
         }
         Binary imageBin = image.get().getImage();
         return Optional.of(imageBin);
+    }
+
+    private Optional<Image> resizedImage(Image img, int width) {
+        try {
+            ByteArrayInputStream in = new ByteArrayInputStream(img.getImage().getData());
+            BufferedImage resizedImg = Scalr.resize(ImageIO.read(in), width);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(resizedImg, "PNG", out);
+            out.flush();
+            img.setImage(new Binary(out.toByteArray()));
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+        return Optional.of(img);
     }
 }

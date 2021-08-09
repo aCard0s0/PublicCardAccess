@@ -3,6 +3,7 @@ package dev.pca.services;
 import com.google.common.collect.Lists;
 import dev.pca.dao.CardDao;
 import dev.pca.models.Card;
+import dev.pca.services.predicates.CardPredicates;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
