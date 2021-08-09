@@ -29,16 +29,27 @@ public class ImageDao {
         this.imageRepo = imageRepo;
     }
 
-    public Image insert(String title, MultipartFile file) throws IOException {
+    public Optional<Image> insert(String title, MultipartFile file) {
         Image image = new Image(title);
-        image.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+        try {
+            image.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
         image.setContentType("image/png");
         image = imageRepo.insert(image);
-        return image;
+        return Optional.of(image);
     }
 
     public Optional<Image> getById(String id) {
         return imageRepo.findById(id);
+    }
+
+    public Optional<Image> getById(String id, int width) {
+        Optional<Image> image = getById(id);
+        return resizedImage(image, width);
     }
 
     public Optional<Image> getByCode(String code) {
@@ -49,7 +60,10 @@ public class ImageDao {
 
     public Optional<Image> getByCode(String code, int width) {
         Optional<Image> image = getByCode(code);
+        return resizedImage(image, width);
+    }
 
+    private Optional<Image> resizedImage(Optional<Image> image, int width) {
         if (image.isPresent()) {
             Image img = image.get();
             try {

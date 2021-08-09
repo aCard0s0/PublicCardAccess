@@ -1,4 +1,4 @@
-package dev.pca.service;
+package dev.pca.services;
 
 import com.google.common.collect.Lists;
 import dev.pca.dao.CardDao;

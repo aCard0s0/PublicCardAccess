@@ -1,8 +1,8 @@
-package dev.pca.controller;
+package dev.pca.controllers;
 
-import dev.pca.controller.exceptions.CardNotFoundException;
+import dev.pca.controllers.exceptions.CardNotFoundException;
 import dev.pca.models.Card;
-import dev.pca.service.CardService;
+import dev.pca.services.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @RestController
-@RequestMapping(path="fab/v0/cards", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path="v0/fab/cards", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CardController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CardController.class);
 
@@ -62,13 +62,6 @@ public class CardController {
         LOGGER.debug("operation='getByCardFilter', message='{}'", queryParams);
         Optional<Collection<Card>> cards = cardService.filterBy(queryParams);
         return buildCollectionResponse(cards, String.format("No cards matches the search parameters."));
-    }
-
-    private ResponseEntity<Card> buildSingleResponse(Optional<Card> card, String errorMessage) {
-        if (card.isEmpty()) {
-            throw new CardNotFoundException(errorMessage);
-        }
-        return ResponseEntity.ok(card.get());
     }
 
     private ResponseEntity<Collection<Card>> buildCollectionResponse(Optional<Collection<Card>> cards, String errorMessage) {

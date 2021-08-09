@@ -1,4 +1,4 @@
-package dev.pca.service;
+package dev.pca.services;
 
 import dev.pca.models.Card;
 
