@@ -55,6 +55,7 @@ public class ImageService {
             if (matcher.find()) {
                 return resizedImage(img.get(), Integer.parseInt(matcher.group(0)));
             }
+            return img;
         }
         return Optional.empty();
     }

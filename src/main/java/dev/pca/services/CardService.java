@@ -36,6 +36,7 @@ public class CardService {
     }
 
     public Optional<Collection<Card>> filterBy(Map<String, String> queryParams) {
+        Collection<Predicate<Card>> majorFilter = new ArrayList<>();
         Collection<Predicate<Card>> filters = new ArrayList<>();
 
         //region general information
@@ -48,20 +49,20 @@ public class CardService {
         if (queryParams.containsKey("flavour")) {
             filters.add(CardPredicates.byFlavour(queryParams.get("flavour")));
         }
-        if (queryParams.containsKey("rarity")) {
-            filters.addAll(CardPredicates.byRarity(queryParams.get("rarity")));
-        }
         if (queryParams.containsKey("type")) {
             filters.addAll(CardPredicates.byType(queryParams.get("type")));
         }
         if (queryParams.containsKey("class")) {
-            filters.add(CardPredicates.byCardClass(queryParams.get("class")));
+            majorFilter.add(CardPredicates.byCardClass(queryParams.get("class")));
         }
         if (queryParams.containsKey("talent")) {
             filters.add(CardPredicates.byTalent(queryParams.get("talent")));
         }
         if (queryParams.containsKey("set")) {
             filters.add(CardPredicates.bySetCode(queryParams.get("set")));
+        }
+        if (queryParams.containsKey("rarity")) {
+            filters.addAll(CardPredicates.byRarity(queryParams.get("rarity")));
         }
         //endregion
 
@@ -98,7 +99,7 @@ public class CardService {
         }
         //endregion
 
-        return cardDao.getByPredicate(filters);
+        return cardDao.getByPredicate(majorFilter, filters);
     }
 
 }

@@ -1,6 +1,5 @@
 package dev.pca.dao;
 
-import dev.pca.models.Card;
 import dev.pca.models.Release;
 import org.springframework.stereotype.Component;
 

@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+@CrossOrigin(origins = "http://localhost:8080/", maxAge = 3600)
 @RestController
 @RequestMapping(path="v0/fab/images", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ImageController {
