@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class CardService {
@@ -36,70 +40,103 @@ public class CardService {
     }
 
     public Optional<Collection<Card>> filterBy(Map<String, String> queryParams) {
-        Collection<Predicate<Card>> majorFilter = new ArrayList<>();
-        Collection<Predicate<Card>> filters = new ArrayList<>();
+        Collection<Predicate<Card>> orFilters = new ArrayList<>();
+        Collection<Predicate<Card>> andFilters = new ArrayList<>();
+
+        if (queryParams.containsKey("query")) {
+            andFilters.addAll(buildQuery(queryParams.get("query")));
+        }
 
         //region general information
         if (queryParams.containsKey("name")) {
-            filters.add(CardPredicates.byName(queryParams.get("name")));
+            andFilters.add(CardPredicates.byName(queryParams.get("name")));
         }
         if (queryParams.containsKey("text")) {
-            filters.add(CardPredicates.byText(queryParams.get("text")));
+            andFilters.add(CardPredicates.byText(queryParams.get("text")));
         }
         if (queryParams.containsKey("flavour")) {
-            filters.add(CardPredicates.byFlavour(queryParams.get("flavour")));
+            andFilters.add(CardPredicates.byFlavour(queryParams.get("flavour")));
         }
         if (queryParams.containsKey("type")) {
-            filters.addAll(CardPredicates.byType(queryParams.get("type")));
+            andFilters.addAll(CardPredicates.byType(queryParams.get("type")));
         }
         if (queryParams.containsKey("class")) {
-            majorFilter.add(CardPredicates.byCardClass(queryParams.get("class")));
+            andFilters.add(CardPredicates.byCardClass(queryParams.get("class")));
         }
         if (queryParams.containsKey("talent")) {
-            filters.add(CardPredicates.byTalent(queryParams.get("talent")));
+            andFilters.add(CardPredicates.byTalent(queryParams.get("talent")));
         }
+
         if (queryParams.containsKey("set")) {
-            filters.add(CardPredicates.bySetCode(queryParams.get("set")));
+            orFilters.addAll(CardPredicates.bySetCode(queryParams.get("set")));
         }
         if (queryParams.containsKey("rarity")) {
-            filters.addAll(CardPredicates.byRarity(queryParams.get("rarity")));
+            andFilters.addAll(CardPredicates.byRarity(queryParams.get("rarity")));
         }
         //endregion
 
         //region stats
         if (queryParams.containsKey("intellect")) {
-            filters.add(CardPredicates.byIntellect(queryParams.get("intellect")));
+            andFilters.add(CardPredicates.byIntellect(queryParams.get("intellect")));
         }
         if (queryParams.containsKey("life")) {
-            filters.add(CardPredicates.byLife(queryParams.get("life")));
+            andFilters.add(CardPredicates.byLife(queryParams.get("life")));
         }
         if (queryParams.containsKey("power")) {
-            filters.add(CardPredicates.byPower(queryParams.get("power")));
+            andFilters.add(CardPredicates.byPower(queryParams.get("power")));
         }
         if (queryParams.containsKey("defense")) {
-            filters.add(CardPredicates.byDefense(queryParams.get("defense")));
+            andFilters.add(CardPredicates.byDefense(queryParams.get("defense")));
         }
         if (queryParams.containsKey("cost")) {
-            filters.add(CardPredicates.byCost(queryParams.get("cost")));
+            andFilters.add(CardPredicates.byCost(queryParams.get("cost")));
         }
         if (queryParams.containsKey("resource")) {
-            filters.add(CardPredicates.byResource(queryParams.get("resource")));
+            andFilters.add(CardPredicates.byResource(queryParams.get("resource")));
         }
         //endregion
 
         //region meta information
         if (queryParams.containsKey("illegalFormats")) {
-            filters.add(CardPredicates.byIllegalFormats(queryParams.get("illegalFormats")));
+            andFilters.add(CardPredicates.byIllegalFormats(queryParams.get("illegalFormats")));
         }
         if (queryParams.containsKey("frames")) {
-            filters.add(CardPredicates.byFrames(queryParams.get("frames")));
+            orFilters.add(CardPredicates.byFrames(queryParams.get("frames")));
         }
         if (queryParams.containsKey("printings")) {
-            filters.add(CardPredicates.byPrintings(queryParams.get("printings")));
+            andFilters.add(CardPredicates.byPrintings(queryParams.get("printings")));
         }
         //endregion
 
-        return cardDao.getByPredicate(majorFilter, filters);
+        return cardDao.getByPredicate(orFilters, andFilters);
+    }
+
+    private Collection<Predicate<Card>> buildQuery(String query) {
+        Collection<Predicate<Card>> andFilters = new ArrayList<>();
+        Matcher matcher;
+
+        // single CardCode
+        matcher = Pattern.compile("^[a-zA-Z]{3}\\d{3}").matcher(query);
+        if (matcher.find()) {
+            // matcher.group();
+            andFilters.addAll(CardPredicates.byCardCode(Collections.singletonList(matcher.group())));
+        }
+        /*final List<String> collect = Pattern.compile("^([a-zA-Z]{3}\\d{3})+")
+                .matcher(query)
+                .results()
+                .map(MatchResult::group)
+                .collect(Collectors.toList());*/
+
+        // cardName
+        matcher = Pattern.compile("\\w+\\.?").matcher(query);
+        if (matcher.find()) {
+            String text = matcher.group();
+            andFilters.add(CardPredicates.byName(text));
+            andFilters.add(CardPredicates.byText(text));
+            //andFilters.add(CardPredicates.byFlavour(text));
+        }
+
+        return andFilters;
     }
 
 }

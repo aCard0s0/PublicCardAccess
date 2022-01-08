@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -38,19 +40,23 @@ public class CardDao {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<Collection<Card>> getByPredicate(Collection<Predicate<Card>> mainFilters, Collection<Predicate<Card>> filters) {
+    public Optional<Collection<Card>> getByPredicate(Collection<Predicate<Card>> orFilters, Collection<Predicate<Card>> andFilters) {
         Stream<Card> stream = cardRepo.findAll().stream();
 
-        if (mainFilters != null && mainFilters.size() > 0) {
+        if (orFilters != null && orFilters.size() > 0) {
             stream = cardRepo.findAll().stream()
-                    .filter(mainFilters.stream().reduce(Predicate::and).orElse(t -> true))
+                    .filter(orFilters.stream().reduce(Predicate::or).orElse(t -> true))
                     .collect(Collectors.toList())
                     .stream();
         }
 
-        return Optional.of(stream
-                .filter(filters.stream().reduce(Predicate::or).orElse(t->true))
-                .limit(MAX_REQUEST_SIZE)
-                .collect(Collectors.toList()));
+        if (andFilters != null && andFilters.size() > 0) {
+            stream = stream.filter(andFilters.stream().reduce(Predicate::and).orElse(t -> true))
+                    .limit(MAX_REQUEST_SIZE)
+                    .collect(Collectors.toList())
+                    .stream();
+        }
+
+        return Optional.of(stream.collect(Collectors.toList()));
     }
 }

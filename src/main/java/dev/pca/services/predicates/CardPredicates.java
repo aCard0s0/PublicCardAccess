@@ -66,8 +66,12 @@ public class CardPredicates {
         return card -> nonNull(card) && parseToCaseInsensitiveRegex(talent).matcher(card.getTalent()).find();
     }
 
-    public static Predicate<Card> bySetCode(String setCode) {
-        return card -> nonNull(card) && parseToCaseInsensitiveRegex(setCode).matcher(card.getSetCode()).find();
+    public static Collection<? extends Predicate<Card>> bySetCode(String setCodes) {
+        Collection<Predicate<Card>> filters = new ArrayList<>();
+        for (String set: getPossibleMultipleParamsFromRequestParams(setCodes)) {
+            filters.add(card -> nonNull(card) && parseToCaseInsensitiveRegex(set).matcher(card.getSetCode()).find());
+        }
+        return filters;
     }
     //endregion
 
