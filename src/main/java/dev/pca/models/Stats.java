@@ -70,8 +70,8 @@ public class Stats {
         return resource;
     }
 
-    public void setResource(String resource) {
-        this.resource = resource;
+    public void setResource(String resources) {
+        this.resource = resources;
     }
 
     @Override

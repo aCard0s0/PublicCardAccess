@@ -1,24 +1,28 @@
 package dev.pca.services;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import dev.pca.dao.CardDao;
 import dev.pca.models.Card;
 import dev.pca.services.predicates.CardPredicates;
+import dev.pca.services.converters.SearchParamsToPredicatesConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+
+import static dev.pca.services.predicates.UtilsPredicates.getPossibleMultipleParamsFromRequestParams;
 
 @Service
 public class CardService {
     private final CardDao cardDao;
+    private final SearchParamsToPredicatesConverter paramsToPredicates;
 
-    public CardService(CardDao cardDao) {
+    public CardService(CardDao cardDao, SearchParamsToPredicatesConverter paramsToPredicates) {
         this.cardDao = cardDao;
+        this.paramsToPredicates = paramsToPredicates;
     }
 
     public Collection<Card> insert(List<Card> cards) {
@@ -45,68 +49,19 @@ public class CardService {
 
         if (queryParams.containsKey("query")) {
             andFilters.addAll(buildQuery(queryParams.get("query")));
+            queryParams.remove("query");
         }
 
-        //region general information
-        if (queryParams.containsKey("name")) {
-            andFilters.add(CardPredicates.byName(queryParams.get("name")));
-        }
-        if (queryParams.containsKey("text")) {
-            andFilters.add(CardPredicates.byText(queryParams.get("text")));
-        }
-        if (queryParams.containsKey("flavour")) {
-            andFilters.add(CardPredicates.byFlavour(queryParams.get("flavour")));
-        }
-        if (queryParams.containsKey("type")) {
-            andFilters.addAll(CardPredicates.byType(queryParams.get("type")));
-        }
-        if (queryParams.containsKey("class")) {
-            andFilters.add(CardPredicates.byCardClass(queryParams.get("class")));
-        }
-        if (queryParams.containsKey("talent")) {
-            andFilters.add(CardPredicates.byTalent(queryParams.get("talent")));
-        }
-
-        if (queryParams.containsKey("set")) {
-            orFilters.addAll(CardPredicates.bySetCode(queryParams.get("set")));
-        }
-        if (queryParams.containsKey("rarity")) {
-            andFilters.addAll(CardPredicates.byRarity(queryParams.get("rarity")));
-        }
-        //endregion
-
-        //region stats
-        if (queryParams.containsKey("intellect")) {
-            andFilters.add(CardPredicates.byIntellect(queryParams.get("intellect")));
-        }
-        if (queryParams.containsKey("life")) {
-            andFilters.add(CardPredicates.byLife(queryParams.get("life")));
-        }
-        if (queryParams.containsKey("power")) {
-            andFilters.add(CardPredicates.byPower(queryParams.get("power")));
-        }
-        if (queryParams.containsKey("defense")) {
-            andFilters.add(CardPredicates.byDefense(queryParams.get("defense")));
-        }
-        if (queryParams.containsKey("cost")) {
-            andFilters.add(CardPredicates.byCost(queryParams.get("cost")));
-        }
-        if (queryParams.containsKey("resource")) {
-            andFilters.add(CardPredicates.byResource(queryParams.get("resource")));
-        }
-        //endregion
-
-        //region meta information
-        if (queryParams.containsKey("illegalFormats")) {
-            andFilters.add(CardPredicates.byIllegalFormats(queryParams.get("illegalFormats")));
-        }
-        if (queryParams.containsKey("frames")) {
-            orFilters.add(CardPredicates.byFrames(queryParams.get("frames")));
-        }
-        if (queryParams.containsKey("printings")) {
-            andFilters.add(CardPredicates.byPrintings(queryParams.get("printings")));
-        }
-        //endregion
+        queryParams.entrySet().forEach(entry -> {
+            List<String> values = getPossibleMultipleParamsFromRequestParams(entry.getValue());
+            if (values.size() == 1) {
+                andFilters.add(paramsToPredicates.convert(entry));
+            } else {
+                for (String v: values) {
+                    orFilters.add(paramsToPredicates.convert(Maps.immutableEntry(entry.getKey(), v)));
+                }
+            }
+        });
 
         return cardDao.getByPredicate(orFilters, andFilters);
     }

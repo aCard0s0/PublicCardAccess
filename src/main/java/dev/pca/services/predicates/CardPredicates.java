@@ -5,13 +5,17 @@ import dev.pca.models.Card;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static dev.pca.services.predicates.UtilsPredicates.*;
 import static java.util.Objects.nonNull;
 
 public class CardPredicates {
-    //region identifiers
+    public static Predicate<Card> noFilter() {
+        return Objects::nonNull;
+    }
+
     public static Collection<Predicate<Card>> byCardId(List<String> ids) {
         Collection<Predicate<Card>> filters = new ArrayList<>();
         for(String id: ids) {
@@ -27,9 +31,7 @@ public class CardPredicates {
         }
         return filters;
     }
-    //endregion
 
-    //region general information
     public static Predicate<Card> byName(String name) {
         return card -> nonNull(card) && parseToCaseInsensitiveRegex(name).matcher(card.getName()).find();
     }
@@ -42,20 +44,12 @@ public class CardPredicates {
         return card -> nonNull(card) && parseToCaseInsensitiveRegex(flavour).matcher(card.getFlavour()).find();
     }
 
-    public static Collection<? extends Predicate<Card>> byRarity(String rarities) {
-        Collection<Predicate<Card>> filters = new ArrayList<>();
-        for (String rarity: getPossibleMultipleParamsFromRequestParams(rarities)) {
-            filters.add(card -> nonNull(card) && parseToCaseInsensitiveRegex(rarity).matcher(card.getRarity()).find());
-        }
-        return filters;
+    public static Predicate<Card> byRarity(String rarities) {
+        return card -> nonNull(card) && parseToCaseInsensitiveRegex(rarities).matcher(card.getRarity()).find();
     }
 
-    public static Collection<? extends Predicate<Card>> byType(String types) {
-        Collection<Predicate<Card>> filters = new ArrayList<>();
-        for (String type: getPossibleMultipleParamsFromRequestParams(types)) {
-            filters.add(card -> nonNull(card) && parseToCaseInsensitiveRegex(type).matcher(card.getType()).find());
-        }
-        return filters;
+    public static Predicate<Card> byType(String types) {
+        return card -> nonNull(card) && parseToCaseInsensitiveRegex(types).matcher(card.getType()).find();
     }
 
     public static Predicate<Card> byCardClass(String cardClass) {
@@ -66,16 +60,10 @@ public class CardPredicates {
         return card -> nonNull(card) && parseToCaseInsensitiveRegex(talent).matcher(card.getTalent()).find();
     }
 
-    public static Collection<? extends Predicate<Card>> bySetCode(String setCodes) {
-        Collection<Predicate<Card>> filters = new ArrayList<>();
-        for (String set: getPossibleMultipleParamsFromRequestParams(setCodes)) {
-            filters.add(card -> nonNull(card) && parseToCaseInsensitiveRegex(set).matcher(card.getSetCode()).find());
-        }
-        return filters;
+    public static Predicate<Card> bySetCode(String setCodes) {
+        return card -> nonNull(card) && parseToCaseInsensitiveRegex(setCodes).matcher(card.getSetCode()).find();
     }
-    //endregion
 
-    //region stats
     public static Predicate<Card> byIntellect(String intellect) {
         return card -> nonNull(card) && parseToCaseInsensitiveRegex(intellect).matcher(card.getStats().getIntellect()).find();
     }
@@ -96,12 +84,10 @@ public class CardPredicates {
         return card -> nonNull(card) && parseToCaseInsensitiveRegex(cost).matcher(card.getStats().getCost()).find();
     }
 
-    public static Predicate<Card> byResource(String resource) {
-        return card -> nonNull(card) && parseToCaseInsensitiveRegex(resource).matcher(card.getStats().getResource()).find();
+    public static Predicate<Card> byResources(String resources) {
+        return card -> nonNull(card) && parseToCaseInsensitiveRegex(resources).matcher(card.getStats().getResource()).find();
     }
-    //endregion
 
-    //region meta information
     public static Predicate<Card> byIllegalFormats(String illegalFormats) {
         return card -> {
             for (String format : card.getIllegalFormats()) {
@@ -114,7 +100,8 @@ public class CardPredicates {
     }
 
     public static Predicate<Card> byFrames(String frames) {
-        return card -> {
+        return card -> //nonNull(card) && parseToCaseInsensitiveRegex(frames).matcher(card.getStats().getResources()).find();
+        {
             for (String format : card.getFrames()) {
                 if (parseToCaseInsensitiveRegex(frames).matcher(format).matches()) {
                     return true;
@@ -134,5 +121,4 @@ public class CardPredicates {
             return false;
         };
     }
-    //endregion
 }

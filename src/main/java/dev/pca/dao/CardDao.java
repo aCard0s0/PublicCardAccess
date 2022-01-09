@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -36,7 +34,7 @@ public class CardDao {
     public Optional<Collection<Card>> getByPredicate(Collection<Predicate<Card>> filters) {
         return Optional.of(cardRepo.findAll().stream()
                 .filter(filters.stream().reduce(Predicate::or).orElse(t->true))
-                .limit(MAX_REQUEST_SIZE)
+                //.limit(MAX_REQUEST_SIZE)
                 .collect(Collectors.toList()));
     }
 
@@ -44,15 +42,13 @@ public class CardDao {
         Stream<Card> stream = cardRepo.findAll().stream();
 
         if (orFilters != null && orFilters.size() > 0) {
-            stream = cardRepo.findAll().stream()
-                    .filter(orFilters.stream().reduce(Predicate::or).orElse(t -> true))
+            stream = stream.filter(orFilters.stream().reduce(Predicate::or).orElse(t -> true))
                     .collect(Collectors.toList())
                     .stream();
         }
 
         if (andFilters != null && andFilters.size() > 0) {
             stream = stream.filter(andFilters.stream().reduce(Predicate::and).orElse(t -> true))
-                    .limit(MAX_REQUEST_SIZE)
                     .collect(Collectors.toList())
                     .stream();
         }
