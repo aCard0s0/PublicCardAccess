@@ -1,6 +1,7 @@
 package dev.pca.dao;
 
 import dev.pca.models.Release;
+import dev.pca.repositories.ReleaseRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -12,8 +13,8 @@ import java.util.stream.Collectors;
 public class ReleaseDao {
     private final ReleaseRepository releaseRepo;
 
-    public ReleaseDao(ReleaseRepository cardRepo) {
-        this.releaseRepo = cardRepo;
+    public ReleaseDao(ReleaseRepository releaseRepo) {
+        this.releaseRepo = releaseRepo;
     }
 
     public Release insert(Release release) {

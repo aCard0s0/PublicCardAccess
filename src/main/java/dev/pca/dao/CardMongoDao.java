@@ -1,6 +1,8 @@
 package dev.pca.dao;
 
+import dev.pca.delegations.CardServiceDelegate;
 import dev.pca.models.Card;
+import dev.pca.repositories.CardRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +13,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class CardDao {
+public class CardMongoDao implements CardServiceDelegate {
     @Value("${pca.api.maxRequestSize.cards:100}")
     private Long MAX_REQUEST_SIZE;
 
     private final CardRepository cardRepo;
 
-    public CardDao(CardRepository cardRepo) {
+    public CardMongoDao(CardRepository cardRepo) {
         this.cardRepo = cardRepo;
     }
 
@@ -31,14 +33,14 @@ public class CardDao {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Collection<Card>> getByPredicate(Collection<Predicate<Card>> filters) {
+    public Optional<Collection<Card>> filterByPredicates(Collection<Predicate<Card>> orFilters) {
         return Optional.of(cardRepo.findAll().stream()
-                .filter(filters.stream().reduce(Predicate::or).orElse(t->true))
+                .filter(orFilters.stream().reduce(Predicate::or).orElse(t->true))
                 //.limit(MAX_REQUEST_SIZE)
                 .collect(Collectors.toList()));
     }
 
-    public Optional<Collection<Card>> getByPredicate(Collection<Predicate<Card>> orFilters, Collection<Predicate<Card>> andFilters) {
+    public Optional<Collection<Card>> filterByPredicates(Collection<Predicate<Card>> orFilters, Collection<Predicate<Card>> andFilters) {
         Stream<Card> stream = cardRepo.findAll().stream();
 
         if (orFilters != null && orFilters.size() > 0) {

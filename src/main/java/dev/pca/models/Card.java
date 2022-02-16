@@ -30,8 +30,8 @@ public class Card {
     private String talent;
     @JsonProperty("setCode")
     private String setCode;
-    @JsonProperty("imageApiPath")
-    private String imageApiPath;
+    @JsonProperty("imagesPaths")
+    private ImagesPaths imagesPaths;
     @JsonProperty("stats")
     private Stats stats;
     @JsonProperty("illegalFormats")
@@ -44,7 +44,7 @@ public class Card {
     private List<String> keywords;
 
     public Card(String id, String cardCode, String name, String text, String flavour, String rarity, String type,
-                String cardClass, String talent, String setCode, String imageApiPath, Stats stats,
+                String cardClass, String talent, String setCode, ImagesPaths imagesPaths, Stats stats,
                 List<String> illegalFormats, List<String> printings, List<String> frames, List<String> keywords)
     {
         this.id = id;
@@ -57,7 +57,7 @@ public class Card {
         this.cardClass = cardClass;
         this.talent = talent;
         this.setCode = setCode;
-        this.imageApiPath = imageApiPath;
+        this.imagesPaths = imagesPaths;
         this.stats = stats;
         this.illegalFormats = illegalFormats;
         this.printings = printings;
@@ -145,12 +145,12 @@ public class Card {
         this.setCode = setCode;
     }
 
-    public String getImageApiPath() {
-        return imageApiPath;
+    public ImagesPaths getImagesPaths() {
+        return imagesPaths;
     }
 
-    public void setImageApiPath(String imageApiPath) {
-        this.imageApiPath = imageApiPath;
+    public void setImagesPaths(ImagesPaths imagesPaths) {
+        this.imagesPaths = imagesPaths;
     }
 
     public Stats getStats() {
@@ -206,7 +206,7 @@ public class Card {
                 .add("cardClass", cardClass)
                 .add("talent", talent)
                 .add("setCode", setCode)
-                .add("imageApiPath", imageApiPath)
+                .add("imagesPaths", imagesPaths)
                 .add("stats", stats)
                 .add("illegalFormats", illegalFormats)
                 .add("printings", printings)

@@ -1,4 +1,5 @@
-package dev.pca.models.exceptions;
+package dev.pca.controllers.exceptions.models;
+
 
 import com.google.common.base.MoreObjects;
 

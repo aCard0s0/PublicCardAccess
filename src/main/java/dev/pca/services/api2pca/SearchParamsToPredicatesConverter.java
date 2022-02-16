@@ -1,9 +1,8 @@
-package dev.pca.services.converters;
+package dev.pca.services.api2pca;
 
 import com.google.common.base.Converter;
 import dev.pca.models.Card;
-import dev.pca.models.converters.SiglaFrameConverter;
-import dev.pca.services.predicates.CardPredicates;
+import dev.pca.services.perdicates.CardPredicates;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -11,10 +10,10 @@ import java.util.function.Predicate;
 
 @Service
 public class SearchParamsToPredicatesConverter extends Converter<Map.Entry<String, String>, Predicate<Card>> {
-    private final SiglaFrameConverter siglaFrame;
+    private AcronymFrameConverter acronymFrame;
 
-    public SearchParamsToPredicatesConverter(SiglaFrameConverter siglaFrame) {
-        this.siglaFrame = siglaFrame;
+    public SearchParamsToPredicatesConverter(AcronymFrameConverter acronymFrame) {
+        this.acronymFrame = acronymFrame;
     }
 
     @Override
@@ -50,12 +49,12 @@ public class SearchParamsToPredicatesConverter extends Converter<Map.Entry<Strin
                 return CardPredicates.byDefense(queryParams.getValue());
             case "cost":
                 return CardPredicates.byCost(queryParams.getValue());
-            case "resource":
+            case "resources":
                 return CardPredicates.byResources(queryParams.getValue());
             case "illegalFormats":
                 return CardPredicates.byIllegalFormats(queryParams.getValue());
             case "frame":
-                return CardPredicates.byFrames(siglaFrame.convert(queryParams.getValue()));
+                return CardPredicates.byFrames(acronymFrame.convert(queryParams.getValue()));
             case "printings":
                 return CardPredicates.byPrintings(queryParams.getValue());
             default:

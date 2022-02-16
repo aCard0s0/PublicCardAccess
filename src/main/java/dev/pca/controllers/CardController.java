@@ -9,7 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +23,6 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@CrossOrigin(origins = "http://localhost:8080/", maxAge = 3600)
 @RestController
 @RequestMapping(path="v0/fab/cards", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CardController {
@@ -38,30 +42,30 @@ public class CardController {
         return new ResponseEntity<>(cardService.insert(cards), HttpStatus.CREATED);
     }
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<Collection<Card>> getAllCards() {
         LOGGER.debug("operation='getAllCards', message=''");
         return buildCollectionResponse(cardService.getAll(), "Empty DB");
-    }
+    }*/
 
     @GetMapping(params = "ids")
     public ResponseEntity<Collection<Card>> getByCardId(@RequestParam List<String> ids) {
         LOGGER.debug("operation='getByCardId', message='{}'", ids);
-        Optional<Collection<Card>> card = cardService.getByCardId(ids);
+        Optional<Collection<Card>> card = cardService.getByCardIds(ids);
         return buildCollectionResponse(card, String.format("Card ID: %s not found.", ids));
     }
 
     @GetMapping(params = "codes")
     public ResponseEntity<Collection<Card>> getByCardCodes(@RequestParam List<String> codes) {
         LOGGER.debug("operation='getByCardCodes', message='{}'", codes);
-        Optional<Collection<Card>> cards = cardService.getByCardCode(codes);
+        Optional<Collection<Card>> cards = cardService.getByCardCodes(codes);
         return buildCollectionResponse(cards, String.format("Card code: %s not found.", codes));
     }
 
     @GetMapping(path = "search")
-    public ResponseEntity<Collection<Card>> getByCardFilter(@RequestParam Map<String, String> queryParams) {
-        LOGGER.debug("operation='getByCardFilter', message='{}'", queryParams);
-        Optional<Collection<Card>> cards = cardService.filterBy(queryParams);
+    public ResponseEntity<Collection<Card>> search(@RequestParam Map<String, String> queryParams) {
+        LOGGER.debug("operation='search', message='{}'", queryParams);
+        Optional<Collection<Card>> cards = cardService.filterByParams(queryParams);
         return buildCollectionResponse(cards, String.format("No cards matches the search parameters."));
     }
 

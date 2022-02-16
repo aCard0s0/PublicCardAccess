@@ -1,4 +1,4 @@
-package dev.pca.services.predicates;
+package dev.pca.services.perdicates;
 
 import java.util.Arrays;
 import java.util.List;

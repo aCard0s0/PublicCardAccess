@@ -1,6 +1,6 @@
 package dev.pca.controllers.exceptions;
 
-import dev.pca.models.exceptions.ExceptionResponse;
+import dev.pca.controllers.exceptions.models.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,7 +17,7 @@ public class CustomizedResponseExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({Exception.class, InvalidImageException.class})
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(true));
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

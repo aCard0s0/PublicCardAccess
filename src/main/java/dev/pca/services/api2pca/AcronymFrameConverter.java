@@ -1,19 +1,21 @@
-package dev.pca.models.converters;
+package dev.pca.services.api2pca;
 
 import com.google.common.base.Converter;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SiglaFrameConverter extends Converter<String, String> {
+public class AcronymFrameConverter extends Converter<String, String> {
     @Override
-    protected String doForward(String sigla) {
-        switch (sigla) {
+    protected String doForward(String acronym) {
+        switch (acronym) {
+            case "gf":
+                return "Gold Foil";
             case "cf":
                 return "Cold Foil";
             case "rf":
-                return "Rainbow Foil";
+                return "Rainbow";
             case "ds":
-                return "Double Slided";
+                return "Double Side";
         }
         return null;
     }

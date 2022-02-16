@@ -15,15 +15,15 @@ public class Stats {
     private String power;
     private String defense;
     private String cost;
-    private String resource;
+    private String resources;
 
-    public Stats(String intellect, String life, String power, String defense, String cost, String resource) {
+    public Stats(String intellect, String life, String power, String defense, String cost, String resources) {
         this.intellect = Optional.ofNullable(intellect).orElse("");
-        this.life = Optional.ofNullable(life).orElse("");;
-        this.power = Optional.ofNullable(power).orElse("");;
-        this.defense = Optional.ofNullable(defense).orElse("");;
-        this.cost = Optional.ofNullable(cost).orElse("");;
-        this.resource = Optional.ofNullable(resource).orElse("");;
+        this.life = Optional.ofNullable(life).orElse("");
+        this.power = Optional.ofNullable(power).orElse("");
+        this.defense = Optional.ofNullable(defense).orElse("");
+        this.cost = Optional.ofNullable(cost).orElse("");
+        this.resources = Optional.ofNullable(resources).orElse("");
     }
 
     public String getIntellect() {
@@ -62,16 +62,16 @@ public class Stats {
         return cost;
     }
 
-    public void setCost(String cost) {
+    public void setCosts(String cost) {
         this.cost = cost;
     }
 
-    public String getResource() {
-        return resource;
+    public String getResources() {
+        return resources;
     }
 
-    public void setResource(String resources) {
-        this.resource = resources;
+    public void setResources(String resources) {
+        this.resources = resources;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class Stats {
                 .add("power", power)
                 .add("defense", defense)
                 .add("cost", cost)
-                .add("resource", resource)
+                .add("resources", resources)
                 .toString();
     }
 }

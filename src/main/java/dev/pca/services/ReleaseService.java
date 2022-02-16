@@ -2,9 +2,8 @@ package dev.pca.services;
 
 import com.google.common.collect.Lists;
 import dev.pca.dao.ReleaseDao;
-import dev.pca.models.Card;
 import dev.pca.models.Release;
-import dev.pca.services.predicates.ReleasePredicates;
+import dev.pca.services.perdicates.ReleasePredicates;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

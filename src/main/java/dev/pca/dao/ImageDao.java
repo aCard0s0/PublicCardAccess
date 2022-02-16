@@ -1,6 +1,7 @@
 package dev.pca.dao;
 
 import dev.pca.models.Image;
+import dev.pca.repositories.ImageRepository;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Value;

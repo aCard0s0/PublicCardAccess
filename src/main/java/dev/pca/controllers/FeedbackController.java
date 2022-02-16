@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +19,6 @@ import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@CrossOrigin(origins = "http://localhost:8080/", maxAge = 3600)
 @RestController
 @RequestMapping(path="v0/feedback", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FeedbackController {

@@ -1,4 +1,4 @@
-package dev.pca.services.predicates;
+package dev.pca.services.perdicates;
 
 import dev.pca.models.Release;
 
@@ -7,8 +7,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static dev.pca.services.predicates.UtilsPredicates.parseToCaseInsensitiveRegex;
-import static dev.pca.services.predicates.UtilsPredicates.parseToCaseSensitiveRegex;
+import static dev.pca.services.perdicates.UtilsPredicates.parseToCaseInsensitiveRegex;
+import static dev.pca.services.perdicates.UtilsPredicates.parseToCaseSensitiveRegex;
+
 
 public class ReleasePredicates {
     //region identifiers

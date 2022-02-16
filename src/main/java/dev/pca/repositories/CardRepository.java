@@ -1,4 +1,4 @@
-package dev.pca.dao;
+package dev.pca.repositories;
 
 import dev.pca.models.Card;
 import org.springframework.data.mongodb.repository.MongoRepository;

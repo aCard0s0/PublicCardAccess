@@ -1,7 +1,7 @@
 package dev.pca.dao;
 
-import dev.pca.models.Card;
 import dev.pca.models.Feedback;
+import dev.pca.repositories.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
