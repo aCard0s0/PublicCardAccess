@@ -3,8 +3,8 @@ package dev.pca.controllers;
 import dev.pca.controllers.exceptions.FeedbackNotFoundException;
 import dev.pca.models.Feedback;
 import dev.pca.services.FeedbackService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @RestController
 @RequestMapping(path="v0/feedback", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FeedbackController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackController.class);
+    private static final Logger LOGGER = LogManager.getLogger(FeedbackController.class);
 
     private final FeedbackService feedbackService;
 

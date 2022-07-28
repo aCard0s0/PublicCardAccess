@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="name">fd-boch-service</Property>
+        <Property name="logs">logs</Property>
+        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} | %-5.5p  | %-10.10t | %-20.20C:%-5.5L | %msg%n</Property>
+        <!--
+        It will look like that:
+        2013-04-03 07:37:51.993 | WARN  | main       | lnetgateway.Server:56    | My app is logging stuff
+        -->
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>${pattern}</pattern>
+            </PatternLayout>
+        </Console>
+
+        <RollingFile name="PCALog" fileName="${logs}/fd-pca-service.log"
+                     filePattern="${logs}/fd-boch-service.log.%d{yyyy-MM-dd}-%i">
+            <PatternLayout>
+                <pattern>${pattern}</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/><!-- Rotated everyday -->
+                <SizeBasedTriggeringPolicy size="25 MB"/> <!-- Or every 25 MB -->
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${logs}" maxDepth="2">
+                    <IfLastModified age="5d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <Appender-ref ref="Console"/>
+            <Appender-ref ref="PCALog"/>
+        </Root>
+    </Loggers>
+</Configuration>

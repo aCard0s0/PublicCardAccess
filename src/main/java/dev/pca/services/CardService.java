@@ -3,7 +3,6 @@ package dev.pca.services;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.pca.dao.CardMongoDao;
-import dev.pca.delegations.CardServiceDelegate;
 import dev.pca.models.Card;
 import dev.pca.services.api2pca.SearchParamsToPredicatesConverter;
 import dev.pca.services.perdicates.CardPredicates;

@@ -4,9 +4,9 @@ import dev.pca.controllers.exceptions.ImageNotFoundException;
 import dev.pca.controllers.exceptions.InvalidImageException;
 import dev.pca.models.Image;
 import dev.pca.services.ImageService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.types.Binary;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @RestController
 @RequestMapping(path="v0/fab/images", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ImageController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CardController.class);
+    private static final Logger LOGGER = LogManager.getLogger(ImageController.class);
 
     private final ImageService imageService;
 

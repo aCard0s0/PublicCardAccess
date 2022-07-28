@@ -3,8 +3,8 @@ package dev.pca.controllers;
 import dev.pca.controllers.exceptions.CardNotFoundException;
 import dev.pca.models.Card;
 import dev.pca.services.CardService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +26,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @RestController
 @RequestMapping(path="v0/fab/cards", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CardController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CardController.class);
+    private static final Logger LOGGER = LogManager.getLogger(CardController.class);
 
     private final CardService cardService;
 
@@ -38,7 +38,7 @@ public class CardController {
 
     @PostMapping
     public ResponseEntity<Collection<Card>> createCard(@RequestBody List<Card> cards) {
-        LOGGER.debug("operation='createCard', message='{}'", cards);
+        LOGGER.info("operation='createCard', message='{}'", cards);
         return new ResponseEntity<>(cardService.insert(cards), HttpStatus.CREATED);
     }
 
@@ -50,21 +50,21 @@ public class CardController {
 
     @GetMapping(params = "ids")
     public ResponseEntity<Collection<Card>> getByCardId(@RequestParam List<String> ids) {
-        LOGGER.debug("operation='getByCardId', message='{}'", ids);
+        LOGGER.info("operation='getByCardId', ids='{}'", ids);
         Optional<Collection<Card>> card = cardService.getByCardIds(ids);
         return buildCollectionResponse(card, String.format("Card ID: %s not found.", ids));
     }
 
     @GetMapping(params = "codes")
     public ResponseEntity<Collection<Card>> getByCardCodes(@RequestParam List<String> codes) {
-        LOGGER.debug("operation='getByCardCodes', message='{}'", codes);
+        LOGGER.info("operation='getByCardCodes', codes='{}'", codes);
         Optional<Collection<Card>> cards = cardService.getByCardCodes(codes);
         return buildCollectionResponse(cards, String.format("Card code: %s not found.", codes));
     }
 
     @GetMapping(path = "search")
     public ResponseEntity<Collection<Card>> search(@RequestParam Map<String, String> queryParams) {
-        LOGGER.debug("operation='search', message='{}'", queryParams);
+        LOGGER.info("operation='search', codes='{}'", queryParams);
         Optional<Collection<Card>> cards = cardService.filterByParams(queryParams);
         return buildCollectionResponse(cards, String.format("No cards matches the search parameters."));
     }
